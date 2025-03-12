@@ -1,0 +1,68 @@
+﻿@using BlazorApp9.Client.Models
+@using BlazorApp9.Client.Services
+@inject RickAndMortyService RickAndMortyService
+@inject NotificationService RadzenNotificationService
+@inject DialogService DialogService
+
+
+<EditForm Model="@Character" OnValidSubmit="Save">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <RadzenFieldset Text="Character Details">
+        <RadzenImage Path="@Character.Image" Width="100px" />
+
+        <div style="margin-bottom: 10px;">
+            <RadzenLabel Text="Name" />
+            <RadzenTextBox @bind-Value="Character.Name" Name="Name" Placeholder="Name" Style="width: 100%;" />
+        </div>
+
+        <div style="margin-bottom: 10px;">
+            <RadzenLabel Text="Status" />
+            <RadzenTextBox @bind-Value="Character.Status" Name="Status" Placeholder="Status" Style="width: 100%;" />
+        </div>
+
+        <div style="margin-bottom: 10px;">
+            <RadzenLabel Text="Species" />
+            <RadzenTextBox @bind-Value="Character.Species" Name="Species" Placeholder="Species" Style="width: 100%;" />
+        </div>
+
+        <div style="margin-bottom: 10px;">
+            <RadzenLabel Text="Type" />
+            <RadzenTextBox @bind-Value="Character.Type" Name="Type" Placeholder="Type" Style="width: 100%;" />
+        </div>
+
+        <div style="margin-bottom: 10px;">
+            <RadzenLabel Text="Gender" />
+            <RadzenTextBox @bind-Value="Character.Gender" Name="Gender" Placeholder="Gender" Style="width: 100%;" />
+        </div>
+
+        <div style="margin-bottom: 10px;">
+            <RadzenLabel Text="Origin" />
+            <RadzenTextBox @bind-Value="Character.Origin.Name" Name="Origin" Placeholder="Origin" Style="width: 100%;" />
+        </div>
+
+        <div style="margin-bottom: 10px;">
+            <RadzenLabel Text="Location" />
+            <RadzenTextBox @bind-Value="Character.Location.Name" Name="Location" Placeholder="Location" Style="width: 100%;" />
+        </div>
+
+        <div style="margin-bottom: 10px;">
+            <RadzenLabel Text="Image URL" />
+            <RadzenTextBox @bind-Value="Character.Image" Name="Image" Placeholder="Image URL" Style="width: 100%;" />
+        </div>
+    </RadzenFieldset>
+
+    <RadzenButton Text="Save" Type="Submit" Style="margin-right: 10px;" />
+    <RadzenButton Text="Cancel" Click="@(args => DialogService.Close(null))" />
+</EditForm>
+
+@code {
+    [Parameter]
+    public Character Character { get; set; }
+
+    private void Save()
+    {
+        DialogService.Close(Character);
+    }
+}
