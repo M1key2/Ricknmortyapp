@@ -4,7 +4,6 @@
 @inject NotificationService RadzenNotificationService
 @inject DialogService DialogService
 
-
 <EditForm Model="@Character" OnValidSubmit="Save">
     <DataAnnotationsValidator />
     <ValidationSummary />
@@ -59,10 +58,25 @@
 
 @code {
     [Parameter]
-    public Character Character { get; set; }
+    public Character? Character { get; set; }
+
+    [Parameter]
+    public List<Character>? Characters { get; set; }
+
+    [Parameter]
+    public EventCallback<Character> OnSave { get; set; }
 
     private void Save()
     {
-        DialogService.Close(Character);
+        if (Character != null && Characters != null)
+        {
+            if (Character.Id == 0)
+            {
+                Character.Id = Characters.Any() ? Characters.Max(c => c.Id) + 1 : 1;
+            }
+
+            DialogService.Close(Character);
+            OnSave.InvokeAsync(Character);
+        }
     }
 }

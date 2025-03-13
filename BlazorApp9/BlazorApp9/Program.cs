@@ -1,4 +1,5 @@
 using BlazorApp9.Client.Pages;
+using BlazorApp9.Client.Services;
 using BlazorApp9.Components;
 using Radzen;
 
@@ -10,6 +11,10 @@ builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 builder.Services.AddRadzenComponents();
 
+builder.Services.AddHttpClient<RickAndMortyService>(client =>
+{
+    client.BaseAddress = new Uri("https://rickandmortyapi.com/api/");
+});
 
 
 var app = builder.Build();

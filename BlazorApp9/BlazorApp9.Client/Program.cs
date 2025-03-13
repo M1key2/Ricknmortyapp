@@ -4,10 +4,8 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Radzen;
 
-
-
-
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
+
 builder.Services.AddHttpClient<RickAndMortyService>(client =>
 {
     client.BaseAddress = new Uri("https://rickandmortyapi.com/api/");

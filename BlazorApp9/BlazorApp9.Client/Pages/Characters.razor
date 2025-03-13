@@ -4,8 +4,6 @@
 @inject RickAndMortyService RickAndMortyService
 @inject NotificationService RadzenNotificationService
 @inject DialogService DialogService
-@inject CharacterDialog CharacterDialog
-
 
 <PageTitle>Characters</PageTitle>
 
@@ -40,14 +38,10 @@
             <Template Context="character">
                 <RadzenButton Icon="edit" Click="@(args => EditCharacter(character))" Style="margin-right: 10px;" />
                 <RadzenButton Icon="delete" Click="@(args => ConfirmDeleteCharacter(character))" />
-
-
-
             </Template>
         </RadzenDataGridColumn>
     </Columns>
 </RadzenDataGrid>
-
 
 @code {
     private List<Character> characters;
@@ -56,28 +50,46 @@
 
     protected override async Task OnInitializedAsync()
     {
-
         var response = await RickAndMortyService.GetCharactersAsync();
-        characters = response?.Results ?? new List<Character>(); 
+        characters = response?.Results ?? new List<Character>();
     }
-
 
     private async Task OpenCreatePopup()
     {
+        var newCharacter = new Character
+            {
+                Origin = new Origin(),
+                Location = new Location()
+            };
+        var result = await DialogService.OpenAsync<CharacterDialog>(
+            "Create Character",
+            new Dictionary<string, object> { { "Character", newCharacter }, { "Characters", characters } },
+            new DialogOptions { Width = "500px", Height = "auto", CloseDialogOnOverlayClick = true }
+        );
 
+        if (result != null)
+        {
+            characters.Add(result);
+            StateHasChanged();
+            RadzenNotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Success",
+                    Detail = "Character created successfully"
+                });
+        }
     }
 
     private async Task EditCharacter(Character character)
     {
         var result = await DialogService.OpenAsync<CharacterDialog>(
             "Edit Character",
-            new Dictionary<string, object> { { "Character", character } },
+            new Dictionary<string, object> { { "Character", character }, { "Characters", characters } },
             new DialogOptions { Width = "500px", Height = "auto", CloseDialogOnOverlayClick = true }
         );
 
         if (result != null)
         {
-
             var index = characters.FindIndex(c => c.Id == result.Id);
             if (index >= 0)
             {
@@ -103,13 +115,9 @@
         }
     }
 
-
-
-
     private void DeleteCharacter(Character character)
     {
-        characters = characters.Where(c => c.Id != character.Id).ToList(); 
-
+        characters = characters.Where(c => c.Id != character.Id).ToList();
         StateHasChanged();
         RadzenNotificationService.Notify(new NotificationMessage
             {
@@ -118,23 +126,4 @@
                 Detail = "Character deleted successfully"
             });
     }
-
-
-
-    private void SaveCharacter()
-    {
-        if (currentCharacter.Id == 0)
-        {
-            currentCharacter.Id = characters.Max(c => c.Id) + 1;
-            characters.Add(currentCharacter);
-        }
-        isDialogVisible = false;
-        StateHasChanged();
-        RadzenNotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Success, Summary = "Success", Detail = "Character saved successfully" });
-    }
-    private void CloseDialog()
-    {
-        isDialogVisible = false;
-    }
-
 }
